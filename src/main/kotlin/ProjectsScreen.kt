@@ -19,11 +19,11 @@ class ProjectsScreen : Screen {
         val navigator = LocalNavigator.current
 
         val allProjects = listOf(
-            "Proyecto 1" to "mio",
-            "Proyecto 2" to "todos",
-            "Proyecto 3" to "mio",
-            "Proyecto 4" to "todos",
-            "Proyecto 5" to "mio"
+            Triple("Proyecto 1", "mio", "Descripción del Proyecto 1"),
+            Triple("Proyecto 2", "todos", "Descripción del Proyecto 2"),
+            Triple("Proyecto 3", "mio", "Descripción del Proyecto 3"),
+            Triple("Proyecto 4", "todos", "Descripción del Proyecto 4"),
+            Triple("Proyecto 5", "mio", "Descripción del Proyecto 5")
         )
 
         var filter by remember { mutableStateOf("todos") }
@@ -83,9 +83,9 @@ class ProjectsScreen : Screen {
                         color = Color(0xFF589C94)
                     )
                 } else {
-                    filteredProjects.forEach { project ->
+                    filteredProjects.forEach { (projectName, _, projectDescription) ->
                         Button(
-                            onClick = { navigator?.pop() },
+                            onClick = { navigator?.push(ProjectScreen(projectName, projectDescription)) },
                             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFAFE3CF)),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -93,12 +93,23 @@ class ProjectsScreen : Screen {
                             shape = RoundedCornerShape(8.dp)
                         ) {
                             Text(
-                                "Entrar al proyecto: ${project.first}",
+                                "Entrar al proyecto: $projectName",
                                 color = Color.White,
                                 fontSize = 16.sp
                             )
                         }
                     }
+                }
+
+                Spacer(modifier = Modifier.height(32.dp))
+
+                Button(
+                    onClick = { navigator?.pop() },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFAFE3CF)),
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text("Volver", color = Color.White, fontSize = 18.sp)
                 }
             }
         }
