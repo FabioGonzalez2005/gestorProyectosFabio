@@ -74,6 +74,16 @@ class ProjectScreen(private val projectName: String, private val projectDescript
                         Text("Ver Tarea: $task", color = Color.White, fontSize = 16.sp)
                     }
                 }
+                Spacer(modifier = Modifier.height(32.dp))
+
+                Button(
+                    onClick = { navigator?.pop() },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFAFE3CF)),
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text("Volver", color = Color.White, fontSize = 18.sp)
+                }
             }
         }
     }
