@@ -1,3 +1,5 @@
+package screens
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,6 +24,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 class LoginScreen : Screen {
     @Composable
     override fun Content() {
+        val url = "http://127.0.0.1:5000/gestor/login"
         var username by remember { mutableStateOf("") }
         var password by remember { mutableStateOf("") }
         var passwordVisible by remember { mutableStateOf(false) }
@@ -93,4 +96,3 @@ class LoginScreen : Screen {
         }
     }
 }
-
