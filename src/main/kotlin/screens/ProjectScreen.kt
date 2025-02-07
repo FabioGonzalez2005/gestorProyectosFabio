@@ -15,15 +15,11 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 
 class ProjectScreen(private val projectName: String, private val projectDescription: String) : Screen {
-
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
 
-        // Tareas y programadores de ejemplo
         val tasks = listOf("Tarea 1", "Tarea 2", "Tarea 3")
-        val programmers = listOf("Programador A", "Programador B", "Programador C")
-
         Box(
             modifier = Modifier
                 .fillMaxSize()

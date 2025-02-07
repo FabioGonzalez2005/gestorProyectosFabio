@@ -2,11 +2,16 @@ package screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -15,12 +20,21 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import model.Projects
+import network.finishedProjects
 
 class WelcomeScreen(private val username: String, private val role: String) : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-        val completedProjects = listOf("Proyecto A", "Proyecto B")
+        val projectsList = remember { mutableStateOf<List<Projects>>(emptyList()) }
+
+        // Llamar a la API y actualizar el estado
+        LaunchedEffect(Unit) {
+            finishedProjects(username, "password_placeholder") { projects ->
+                projectsList.value = projects
+            }
+        }
 
         Box(
             modifier = Modifier
@@ -34,7 +48,7 @@ class WelcomeScreen(private val username: String, private val role: String) : Sc
                     .padding(20.dp)
                     .background(Color.White, shape = RoundedCornerShape(16.dp))
                     .padding(20.dp),
-                verticalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
@@ -44,7 +58,7 @@ class WelcomeScreen(private val username: String, private val role: String) : Sc
                     textAlign = TextAlign.Center
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
                     "Rol: $role",
@@ -53,7 +67,7 @@ class WelcomeScreen(private val username: String, private val role: String) : Sc
                     textAlign = TextAlign.Center
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
                     onClick = { navigator?.push(ProjectsScreen()) },
@@ -69,17 +83,25 @@ class WelcomeScreen(private val username: String, private val role: String) : Sc
                 Text(
                     "Historial de proyectos terminados:",
                     fontSize = 18.sp,
-                    color = Color(0xFF589C94)
+                    color = Color(0xFF589C94),
+                    textAlign = TextAlign.Center
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                completedProjects.forEach { project ->
-                    Text(
-                        project,
-                        fontSize = 16.sp,
-                        color = Color(0xFF589C94)
-                    )
+                if (projectsList.value.isEmpty()) {
+                    Text("No hay proyectos terminados", fontSize = 16.sp, color = Color.Gray)
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(300.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        items(projectsList.value) { project ->
+                            ProjectCard(project)
+                        }
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(32.dp))

@@ -13,23 +13,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import model.Projects
+import network.activeProjects
 
 class ProjectsScreen : Screen {
 
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-
-        val allProjects = listOf(
-            Triple("Proyecto 1", "mio", "Descripción del Proyecto 1"),
-            Triple("Proyecto 2", "todos", "Descripción del Proyecto 2"),
-            Triple("Proyecto 3", "mio", "Descripción del Proyecto 3"),
-            Triple("Proyecto 4", "todos", "Descripción del Proyecto 4"),
-            Triple("Proyecto 5", "mio", "Descripción del Proyecto 5")
-        )
-
+        val coroutineScope = rememberCoroutineScope()
+        var projects by remember { mutableStateOf<List<Projects>>(emptyList()) }
+        var isLoading by remember { mutableStateOf(true) }
         var filter by remember { mutableStateOf("todos") }
-        val filteredProjects = allProjects.filter { it.second == filter || filter == "todos" }
+
+        // Llamada a la API
+        LaunchedEffect(Unit) {
+            activeProjects("usuario", "password") { fetchedProjects ->
+                projects = fetchedProjects
+                isLoading = false
+            }
+        }
+
+        val filteredProjects = projects.filter { it.name == filter || filter == "todos" }
 
         Box(
             modifier = Modifier
@@ -78,16 +83,18 @@ class ProjectsScreen : Screen {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                if (filteredProjects.isEmpty()) {
+                if (isLoading) {
+                    CircularProgressIndicator(color = Color(0xFF589C94))
+                } else if (filteredProjects.isEmpty()) {
                     Text(
                         "No hay proyectos disponibles.",
                         fontSize = 16.sp,
                         color = Color(0xFF589C94)
                     )
                 } else {
-                    filteredProjects.forEach { (projectName, _, projectDescription) ->
+                    filteredProjects.forEach { project ->
                         Button(
-                            onClick = { navigator?.push(ProjectScreen(projectName, projectDescription)) },
+                            onClick = { navigator?.push(ProjectScreen(project.name, project.descripcion)) },
                             colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFAFE3CF)),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -95,7 +102,7 @@ class ProjectsScreen : Screen {
                             shape = RoundedCornerShape(8.dp)
                         ) {
                             Text(
-                                "Entrar al proyecto: $projectName",
+                                "${project.name}",
                                 color = Color.White,
                                 fontSize = 16.sp
                             )

@@ -19,13 +19,9 @@ class TaskScreen(private val taskName: String) : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current
-
-        // Datos de ejemplo de la tarea
-        val taskDescription = "Descripción de la tarea: Aquí se describen los detalles de la tarea."
+        val taskDescription = "Descripción de la tarea: "
         val taskStatus = "Pendiente"
         val availableProgrammers = listOf("Programador A", "Programador B", "Programador C")
-
-        // Variable para guardar el programador asignado
         var assignedProgrammer by remember { mutableStateOf<String?>(null) }
 
         Box(

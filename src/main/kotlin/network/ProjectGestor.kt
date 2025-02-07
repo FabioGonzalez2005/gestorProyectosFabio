@@ -8,27 +8,26 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import model.LoginRequest
+import model.Projects
 import model.User
 import network.NetworkUtils.httpClient
 import utils.sha512
 
-fun apiLogIn(usuario: String, password: String, onSuccessResponse: (User) -> Unit){
-    val url = "http://127.0.0.1:5000/gestor/login"
+fun projectGestor(usuario: String, password: String, onSuccessResponse: (List<Projects>) -> Unit) {
+    val url = "http://127.0.0.1:5000/proyectos/finalizados"
     CoroutineScope(Dispatchers.IO).launch {
-        val encryptedPassword = sha512(password)
-        val response = httpClient.post(url){
+        val response = httpClient.get(url) {
             contentType(ContentType.Application.Json)
-            setBody(LoginRequest(usuario, encryptedPassword))
         }
 
         val responseBody = response.bodyAsText()
         println(responseBody)
 
-        if (response.status == HttpStatusCode.OK){
-            val user = response.body<User>()
-            onSuccessResponse(user)
-        } else{
-            println("Error: ${response.status}, Body: ${responseBody}")
+        if (response.status == HttpStatusCode.OK) {
+            val projects = response.body<List<Projects>>()
+            onSuccessResponse(projects)
+        } else {
+            println("Error: ${response.status}, Body: $responseBody")
         }
     }
 }

@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextAlign
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import network.apiLogIn
 
 class LoginScreen : Screen {
     @Composable
@@ -84,7 +85,9 @@ class LoginScreen : Screen {
 
                 Button(
                     onClick = {
-                        navigator?.push(WelcomeScreen(username, "Desarrollador"))
+                        apiLogIn(username, password) { user ->
+                            navigator?.push(WelcomeScreen(username, "Desarrollador"))
+                        }
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFAFE3CF)),
                     modifier = Modifier.fillMaxWidth(),

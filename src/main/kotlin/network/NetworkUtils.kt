@@ -6,7 +6,7 @@ import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 
-object NetworkUntils {
+object NetworkUtils {
     val httpClient = HttpClient{
         install(ContentNegotiation){
             json(json = Json { ignoreUnknownKeys = true }, contentType = ContentType.Any)
